@@ -1,3 +1,4 @@
+//Enhance UX: scroll to top on normal navigation, preserve on back/forward"
 import { useEffect } from 'react';
 import { useLocation, useNavigationType } from 'react-router-dom';
 
