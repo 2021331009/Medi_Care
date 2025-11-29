@@ -1,4 +1,3 @@
-//Implement RelatedDoctors component with dynamic filtering and enhanced responsive UI
 import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import { useNavigate } from 'react-router-dom'
