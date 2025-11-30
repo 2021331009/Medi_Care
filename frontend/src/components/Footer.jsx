@@ -18,8 +18,8 @@ const Footer = () => {
           className="md:w-1/3 space-y-4"
         >
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-wide bg-gradient-to-r from-blue-700 via-purple-600 to-green-500 text-transparent bg-clip-text">
-            Medicare
-          </h2>
+  Medicare
+</h2>
 
           <p className="text-gray-600 text-sm leading-relaxed">
             <strong>Medicare</strong> is a Bangladesh-based digital healthcare platform that connects patients with licensed doctors.
@@ -37,10 +37,10 @@ const Footer = () => {
           <ul className="space-y-2 text-sm">
             {[
               { label: 'Home', path: '/' },
-              { label: 'my-appoinement', path: 'my-appointment' },
+              {label:'my-appoinement',path:'my-appointment'},
               { label: 'About us', path: '/about' },
               { label: 'Contact us', path: '/contact' },
-
+              
             ].map((link, index) => (
               <li key={index}>
                 <Link
@@ -55,7 +55,30 @@ const Footer = () => {
           </ul>
         </motion.div>
 
-      
+        {/* Right Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="md:w-1/3 space-y-4"
+        >
+          <h3 className="text-lg font-semibold text-blue-700">Get in Touch</h3>
+          <ul className="space-y-2 text-sm text-blue-700">
+            <li>
+              <a href="tel:+8801823024067" className="hover:text-blue-800 transition-colors duration-300">
+                📞 +880 1823-024067
+              </a>
+            </li>
+            <li>
+              <a
+                href="mailto:2021331008@student.sust.edu"
+                className="hover:text-blue-800 transition-colors duration-300 break-all"
+              >
+                ✉️ support@medicare.com
+              </a>
+            </li>
+          </ul>
+        </motion.div>
       </div>
 
       <motion.div
