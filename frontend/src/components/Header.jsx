@@ -117,7 +117,7 @@ const Header = () => {
           <div className="absolute left-0 top-0 w-1/2 h-full z-10 cursor-pointer" onClick={goToPrev} />
           <div className="absolute right-0 top-0 w-1/2 h-full z-10 cursor-pointer" onClick={goToNext} />
 
-          {/* <AnimatePresence initial={false}>
+          <AnimatePresence initial={false}>
             <motion.img
               key={currentIndex}
               src={sliderImages[currentIndex]}
@@ -137,7 +137,7 @@ const Header = () => {
                 transition: { type: "spring", stiffness: 200 },
               }}
             />
-          </AnimatePresence> */}
+          </AnimatePresence>
         </div>
       </div>
     </motion.div>
