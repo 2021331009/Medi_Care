@@ -134,10 +134,49 @@ const Navbar = () => {
         </button>
       </div>
 
-
-
-
-
+      {/* Mobile Menu */}
+      {showMenu && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          className="lg:hidden mt-4 flex flex-col space-y-3 overflow-hidden"
+        >
+          {["/", "/doctors", "/about", "/contact"].map((path, idx) => (
+            <NavLink
+              key={idx}
+              to={path}
+              onClick={() => {
+                scrollToTop();
+                setShowMenu(false);
+              }}
+              className={({ isActive }) =>
+                `block text-md font-medium hover:text-teal-600 transition duration-300 ${isActive ? "text-teal-600" : "text-gray-700"} px-2`
+              }
+            >
+              {path === "/" ? "Home" : path === "/doctors" ? "All Doctors" : path === "/about" ? "About" : "Contact"}
+            </NavLink>
+          ))}
+          {!token ? (
+            <button
+              onClick={() => {
+                setShowMenu(false);
+                scrollToTop();
+                navigate("/login");
+              }}
+              className="w-full bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg transition duration-300 cursor-pointer"
+            >
+              Create Account
+            </button>
+          ) : (
+            <div className="space-y-2">
+              <button onClick={() => { navigate("/my-profile"); setShowMenu(false); scrollToTop(); }} className="block w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer">My Profile</button>
+              <button onClick={() => { navigate("/my-appointment"); setShowMenu(false); scrollToTop(); }} className="block w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer">My Appointment</button>
+              <button onClick={() => { navigate("/appointment-history"); setShowMenu(false); scrollToTop(); }} className="block w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer">Appointment History</button>
+              <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 cursor-pointer">Logout</button>
+            </div>
+          )}
+        </motion.div>
+      )}
     </motion.nav>
   );
 };
