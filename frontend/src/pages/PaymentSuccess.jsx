@@ -13,7 +13,7 @@ const PaymentSuccess = () => {
         to="/my-appointment"
         className="inline-block px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
       >
-        
+       Go to My Appointments
       </Link>
     </div>
   );
