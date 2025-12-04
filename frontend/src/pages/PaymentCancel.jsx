@@ -9,6 +9,12 @@ const PaymentCancel = () => {
       <p className="text-lg text-yellow-800 mb-6">
         You have cancelled the payment process. You can try again anytime.
       </p>
+      <Link
+        to="/my-appointment"
+        className="inline-block px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition"
+      >
+        Go Back to Appointments
+      </Link>
     </div>
   );
 };
