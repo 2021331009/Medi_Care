@@ -108,9 +108,107 @@ const AdminContextProvider = (props) => {
         }
     }
 
-   
+    const deleteAppointment = async (appointmentId) => {
+        try {
+            const { data } = await axios.delete(
+                `${backendUrl}/api/admin/delete-appointment`,
+                { 
+                    headers: { aToken },
+                    data: { appointmentId }
+                }
+            )
+            if (data.success) {
+                // Remove the appointment from local state
+                setAppointments(prev => prev.filter(app => app._id !== appointmentId));
+                
+                // Refresh doctors list to ensure slot availability is up to date
+                await getAllDoctors();
+                
+                toast.success('Appointment deleted successfully');
+                return true;
+            } else {
+                toast.error(data.message);
+                return false;
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to delete appointment');
+            return false;
+        }
+    }
 
-    
+    const getDashboardStats = async () => {
+        try {
+            setLoading(true);
+            const { data } = await axios.get(
+                `${backendUrl}/api/admin/dashboard-stats`,
+                { headers: { aToken } }
+            );
+            if (data.success) {
+                setDashboardStats(data.stats);
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to fetch dashboard statistics');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+const deleteDoctor = async (doctorId) => {
+  try {
+    const response = await fetch(`${backendUrl}/api/admin/doctors/${doctorId}`, { 
+      method: 'DELETE',
+      headers: {
+        aToken,  // your backend expects 'aToken' header based on your other requests
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Server error: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    if (data.success) {
+      await getAllDoctors();
+      return true;
+    } else {
+      throw new Error(data.message || 'Failed to delete doctor');
+    }
+  } catch (error) {
+    console.error("Delete doctor error:", error);
+    return false;
+  }
+};
+
+
+    // Initial data load
+    useEffect(() => {
+        if (aToken) {
+            getAllDoctors();
+            getAllAppointments();
+            getDashboardStats();
+        }
+    }, [aToken]);
+
+    const value = {
+        aToken,
+        setAToken,
+        backendUrl,
+        doctors,
+        getAllDoctors,
+        changeAvailability,
+        appointments,
+        getAllAppointments,
+        cancelAppointment,
+        deleteAppointment,
+        loading,
+        dashboardStats,
+        getDashboardStats,
+        deleteDoctor
+    };
 
     return (
         <AdminContext.Provider value={value}>
