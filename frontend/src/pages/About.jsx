@@ -59,3 +59,56 @@ const About = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
         >
+          <p>
+            Welcome to <span className="font-semibold text-blue-600">Medicare</span>, your trusted partner in managing your healthcare needs. We understand the challenges individuals face when scheduling appointments or keeping health records organized.
+          </p>
+          <p>
+            Our commitment is to deliver a smooth, tech-powered experience. We constantly improve our platform to bring you the best service, whether you’re booking your first visit or managing ongoing care.
+          </p>
+          <div>
+            <h3 className="text-xl font-semibold text-blue-600 mb-1">Our Vision</h3>
+            <p>
+              We aim to bridge the gap between patients and healthcare providers, ensuring you have seamless access to care—anytime, anywhere.
+            </p>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* ⭐ Why Choose Us */}
+      <motion.div 
+        className="text-center mb-10"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+      >
+        <h2 className="text-3xl font-bold">
+          Why <span className="text-blue-600">Choose Us</span>
+        </h2>
+      </motion.div>
+
+      <motion.div
+        className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 text-center"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.7, delay: 0.2 }}
+      >
+        {[
+          { title: 'Efficiency', desc: 'Streamlined appointment scheduling that fits your lifestyle.' },
+          { title: 'Convenience', desc: 'Access to trusted healthcare professionals in your area.' },
+          { title: 'Personalization', desc: 'Health reminders and suggestions tailored just for you.' }
+        ].map((item, index) => (
+          <motion.div
+            key={index}
+            whileHover={{ scale: 1.05 }}
+            className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition"
+          >
+            <h4 className="text-xl font-semibold text-blue-600 mb-2">{item.title}</h4>
+            <p className="text-gray-600">{item.desc}</p>
+          </motion.div>
+        ))}
+      </motion.div>
+    </section>
+  )
+}
+
+export default About
