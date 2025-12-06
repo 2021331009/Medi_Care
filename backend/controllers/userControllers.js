@@ -129,7 +129,107 @@ const loginUser = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+const verifyEmail = async (req, res) => {
+  try {
+    const token = req.query.token?.trim();
+
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        message: "Verification token is required.",
+      });
+    }
+
+    // First, try to find a user with this token
+    const user = await userModel.findOne({ emailVerificationToken: token });
+
+    if (!user) {
+      return res.json({
+        success: false,
+        message: "Verification link is invalid. Please request a new one.",
+      });
+    }
+
+    // If an expiry is set, ensure it's still in the future
+    if (user.emailVerificationExpires && user.emailVerificationExpires <= new Date()) {
+      return res.json({
+        success: false,
+        message: "Verification link has expired. Please register again to receive a new link.",
+      });
+    }
+
+    user.isEmailVerified = true;
+    user.emailVerificationToken = null;
+    user.emailVerificationExpires = null;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "Email verified successfully. You can now log in.",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+const getProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userData = await userModel.findById(userId).select("-password");
+    if (!userData) {
+      return res.json({ success: false, message: "User not found" });
+    }
+    res.json({ success: true, userData });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+const updateProfile = async (req, res) => {
+  try {
+    const { userId, name, phone, dob, gender, address } = req.body;
+    const imageFile = req.file;
+
+    if (!name || !phone || !dob || !gender) {
+      return res.json({ success: false, message: "Data Missing" });
+    }
+
+    const updateData = {
+      name,
+      phone,
+      dob,
+      gender,
+      address: JSON.parse(address),
+    };
+
+    if (imageFile) {
+      // Check if the image was already uploaded to Cloudinary by our middleware
+      if (imageFile.url) {
+        // New system: image is already uploaded to Cloudinary
+        updateData.image = imageFile.url;
+      } else if (imageFile.path) {
+        // Old system: manual upload to Cloudinary using local path
+        const imageUpload = await cloudinary.uploader.upload(imageFile.path, {
+          resource_type: "image",
+        });
+        updateData.image = imageUpload.secure_url;
+      }
+    }
+
+    await userModel.findByIdAndUpdate(userId, updateData);
+    res.json({ success: true, message: "Profile Updated" });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};
 export {
   registerUser,
-  loginUser
+  loginUser,
+  verifyEmail,
+  getProfile,
+  updateProfile
 };
