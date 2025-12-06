@@ -330,6 +330,77 @@ const listAppointment = async (req, res) => {
     res.status(500).json({ success: false, message: "Failed to fetch appointments: " + error.message });
   }
 };
+
+const cancelAppointment = async (req, res) => {
+  try {
+    const { appointmentId } = req.body;
+    const userId = req.user.id;
+
+    // Find and delete the appointment
+    const appointment = await appointmentModel.findOneAndDelete({
+      _id: appointmentId,
+      userId,
+    });
+    if (!appointment) {
+      return res.json({ success: false, message: "Appointment not found or unauthorized" });
+    }
+
+    // Update doctor's slots_booked to remove the canceled slot
+    const { docId, slotDate, slotTime } = appointment;
+
+    // First, pull the slot from the array
+    await doctorModel.updateOne(
+      { _id: docId },
+      { $pull: { [`slots_booked.${slotDate}`]: slotTime } }
+    );
+
+    // Check if the slotDate array is empty or undefined, and unset it if empty
+    const doctor = await doctorModel.findById(docId);
+    if (doctor.slots_booked && doctor.slots_booked[slotDate]?.length === 0) {
+      await doctorModel.updateOne(
+        { _id: docId },
+        { $unset: { [`slots_booked.${slotDate}`]: "" } }
+      );
+    }
+
+    res.json({ success: true, message: "Appointment canceled successfully" });
+  } catch (error) {
+    console.error("Error canceling appointment:", error);
+    res.json({ success: false, message: "Failed to cancel appointment: " + error.message });
+  }
+};
+
+const deleteAppointmentHistory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    // Find and delete the appointment that belongs to the user and is either cancelled or completed
+    const appointment = await appointmentModel.findOneAndDelete({
+      _id: id,
+      userId,
+      $or: [{ cancelled: true }, { isCompleted: true }]
+    });
+
+    if (!appointment) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Appointment not found or cannot be deleted" 
+      });
+    }
+
+    res.json({ 
+      success: true, 
+      message: "Appointment removed from history successfully" 
+    });
+  } catch (error) {
+    console.error("Error deleting appointment history:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Failed to delete appointment: " + error.message 
+    });
+  }
+};
 export {
   registerUser,
   loginUser,
@@ -338,4 +409,6 @@ export {
   updateProfile,
   bookAppointment,
   listAppointment,
+  cancelAppointment,
+  deleteAppointmentHistory,
 };
