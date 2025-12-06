@@ -57,7 +57,7 @@ const DoctorAppointment = () => {
           <div className="flex justify-end gap-2">
             <button
               onClick={() => {
-                toast.dismiss(); // Close the confirmation toast
+                toast.dismiss();
                 processStatusChange(appointmentId, newStatus);
               }}
               className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition-colors"
@@ -82,7 +82,7 @@ const DoctorAppointment = () => {
         }
       );
     } else {
-      // For confirmation, proceed directly
+      
       await processStatusChange(appointmentId, newStatus);
     }
   };
@@ -100,7 +100,7 @@ const DoctorAppointment = () => {
         
         if (data.success) {
           toast.success('Appointment confirmed successfully');
-          // Update the appointment status locally
+     
           setAppointments(prev => prev.map(apt => 
             apt._id === appointmentId 
               ? { ...apt, isConfirmed: true, status: 'confirmed' }
@@ -118,7 +118,7 @@ const DoctorAppointment = () => {
 
         if (data.success) {
           toast.success('Appointment marked as completed');
-          // Update the appointment status locally
+          
           setAppointments(prev => prev.map(apt => 
             apt._id === appointmentId 
               ? { ...apt, isCompleted: true, patientVisited: true, status: 'completed', isConfirmed: true }
@@ -136,7 +136,7 @@ const DoctorAppointment = () => {
 
         if (data.success) {
           toast.success('Appointment cancelled successfully');
-          // First update local state
+         
           setAppointments(prev => prev.map(apt => 
             apt._id === appointmentId 
               ? { 
@@ -149,13 +149,13 @@ const DoctorAppointment = () => {
                 }
               : apt
           ));
-          // Then fetch fresh data after a short delay to ensure backend has processed the change
+         
           setTimeout(async () => {
             try {
               await fetchAppointments();
             } catch (error) {
               console.error('Error refreshing appointments:', error);
-              // If refresh fails, at least we have the local state update
+             
             }
           }, 500);
         } else {
@@ -178,7 +178,7 @@ const DoctorAppointment = () => {
   };
 
   const handleDelete = async (appointmentId, patientName) => {
-    // Show confirmation toast
+   
     toast.warn(
       <div>
         <p className="font-medium mb-2">Delete Appointment Record?</p>

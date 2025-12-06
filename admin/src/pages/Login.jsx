@@ -15,7 +15,6 @@ const Login = () => {
   const { setDToken } = useContext(DoctorContext);
   const navigate = useNavigate();
 
-  // Optional: Add handleSubmit logic here
   const onSubmitHandler=async (event)=>{
       event.preventDefault()
       setLoading(true);

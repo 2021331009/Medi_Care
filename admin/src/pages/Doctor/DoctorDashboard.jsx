@@ -84,7 +84,6 @@ const DoctorDashboard = () => {
       console.log('API Response:', data);
       
       if (data.success) {
-        // Log the appointments data
         console.log('Today\'s Appointments:', data.stats.todayAppointments);
         console.log('Recent Appointments:', data.stats.recentAppointments);
         
@@ -218,7 +217,7 @@ const DoctorDashboard = () => {
       return `${day.toString().padStart(2, '0')} ${months[month - 1]}, ${year}`;
     } catch (error) {
       console.error('Error formatting date:', error);
-      return dateString; // Return original string if formatting fails
+      return dateString; 
     }
   };
 
@@ -231,7 +230,7 @@ const DoctorDashboard = () => {
       return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
     } catch (error) {
       console.error('Error formatting time:', error);
-      return timeString; // Return original string if formatting fails
+      return timeString; 
     }
   };
 
