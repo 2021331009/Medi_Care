@@ -104,7 +104,7 @@ const MyAppointment = () => {
     });
 
     if (data?.url) {
-      window.location.href = data.url; // redirect user to SSLCommerz payment page
+      window.location.href = data.url; 
     } else {
       toast.error("Failed to initiate online payment");
     }

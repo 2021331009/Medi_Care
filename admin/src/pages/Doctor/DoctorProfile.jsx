@@ -3,7 +3,6 @@ import { DoctorContext } from '../../context/DoctorContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { assets } from '../../assets/assets';
-
 const DoctorProfile = () => {
   const { backendUrl, dToken } = useContext(DoctorContext);
   const [doctorInfo, setDoctorInfo] = useState(null);
@@ -23,7 +22,6 @@ const DoctorProfile = () => {
       line2: ''
     }
   });
-
   useEffect(() => {
     if (doctorInfo) {
       setEditForm({
@@ -42,6 +40,9 @@ const DoctorProfile = () => {
     }
   }, [doctorInfo]);
 
+
+
+
   const fetchDoctorProfile = async () => {
     try {
       const { data } = await axios.get(`${backendUrl}/api/doctor/profile`, {
@@ -59,7 +60,6 @@ const DoctorProfile = () => {
       setLoading(false);
     }
   };
-
   const handleAvailabilityChange = async () => {
     try {
       const { data } = await axios.put(
@@ -83,11 +83,9 @@ const DoctorProfile = () => {
       toast.error('Error updating availability');
     }
   };
-
   useEffect(() => {
     fetchDoctorProfile();
   }, [backendUrl, dToken]);
-
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -102,7 +100,6 @@ const DoctorProfile = () => {
       reader.readAsDataURL(file);
     }
   };
-
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -129,7 +126,6 @@ const DoctorProfile = () => {
           }
         }
       );
-
       if (data.success) {
         toast.success('Profile updated successfully');
         setIsEditing(false);
@@ -161,7 +157,6 @@ const DoctorProfile = () => {
       }));
     }
   };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -169,7 +164,6 @@ const DoctorProfile = () => {
       </div>
     );
   }
-
   if (!doctorInfo) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -177,7 +171,6 @@ const DoctorProfile = () => {
       </div>
     );
   }
-
   return (
     <div className="max-w-4xl mx-auto p-6">
       {!isEditing ? (
@@ -211,7 +204,6 @@ const DoctorProfile = () => {
                 <label htmlFor="available" className="text-gray-700 cursor-pointer">Available for Appointments</label>
               </div>
             </div>
-
             {/* Doctor Info Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
@@ -254,7 +246,6 @@ const DoctorProfile = () => {
                 </div>
               </div>
             </div>
-
             {/* About Section */}
             <div>
               <p className="mb-1 font-medium text-gray-700">About</p>
@@ -295,7 +286,6 @@ const DoctorProfile = () => {
                 hidden
               />
             </div>
-
             {/* Doctor Info Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">

@@ -261,5 +261,4 @@ const AllAppointments = () => {
     </div>
   );
 };
-
 export default AllAppointments;

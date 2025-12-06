@@ -17,14 +17,11 @@ const Appointment = () => {
   const [slotIndex, setSlotIndex] = useState(0);
   const [slotTime, setSlotTime] = useState("");
   
-  // Modify the fetchDocInfo function to get fresh data from the server instead of local cache
   const fetchDocInfo = async () => {
     try {
-      // First try to get from context (for initial load)
       const cachedDoc = doctors.find((doc) => doc._id === docId);
       setDocInfo(cachedDoc);
       
-      // Then fetch fresh data from the server to ensure we have the latest slots_booked
       const { data } = await axios.get(`${backendUrl}/api/user/doctor/${docId}`);
       if (data.success && data.doctor) {
         setDocInfo(data.doctor);
@@ -83,7 +80,6 @@ const Appointment = () => {
     setDocSlots(allSlots);
   };
 
-  // Modify the handleBookAppointment function to fetch fresh data after booking
   const handleBookAppointment = async () => {
     if (!token) {
       toast.error("Please login to book an appointment");
@@ -120,10 +116,8 @@ const Appointment = () => {
         toast.success(response.data.message);
         setSlotTime("");
         
-        // Get fresh doctor data with updated availability after booking
         await fetchDocInfo();
         
-        // Navigate after a small delay to ensure the doctor data is refreshed
         setTimeout(() => {
           navigate("/my-appointment");
         }, 500);
@@ -146,7 +140,6 @@ const Appointment = () => {
     }
   }, [docInfo]);
 
-  // Refresh slots every 30 seconds to keep them updated
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (docInfo) {
