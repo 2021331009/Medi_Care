@@ -8,13 +8,12 @@ const AppContextProvider = (props) => {
   const currencySymbol = "৳";
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-  // Load token initially from localStorage (null if none)
+  
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [doctors, setDoctors] = useState([]);
   const [topDoctors, setTopDoctors] = useState([]);
   const [userData, setUserData] = useState(null);
 
-  // Sync token to localStorage whenever it changes
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
@@ -23,15 +22,14 @@ const AppContextProvider = (props) => {
     }
   }, [token]);
 
-  // Axios instance with token header
+  
   const axiosInstance = axios.create({
     baseURL: backendUrl,
     headers: token
       ? { Authorization: `Bearer ${token}` }
-      : {}, // only add header if token exists
+      : {}, 
   });
 
-  // Axios interceptor for 401
   axiosInstance.interceptors.response.use(
     (res) => res,
     (err) => {
@@ -70,7 +68,7 @@ const AppContextProvider = (props) => {
   };
 
   useEffect(() => {
-    // Initial fetch
+    
     getDoctorsData();
     const interval = setInterval(() => getDoctorsData(), 10000);
     return () => clearInterval(interval);
