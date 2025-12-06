@@ -226,10 +226,76 @@ const updateProfile = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+const bookAppointment = async (req, res) => {
+  try {
+    const { docId, slotDate, slotTime } = req.body;
+    const userId = req.user.id;
+
+    if (!slotTime) {
+      return res.json({ success: false, message: "Please select a time slot." });
+    }
+
+    const docData = await doctorModel.findById(docId).select("-password");
+    if (!docData) {
+      return res.json({ success: false, message: "Doctor not found" });
+    }
+    if (!docData.available) {
+      return res.json({ success: false, message: "Doctor not available for booking." });
+    }
+
+    let slots_booked = docData.slots_booked || {};
+
+    // Ensure slots_booked[slotDate] is an array, initialize if undefined or not an array
+    if (!Array.isArray(slots_booked[slotDate])) {
+      slots_booked[slotDate] = [];
+    }
+
+    // Check if the slot is already booked
+    if (slots_booked[slotDate].includes(slotTime)) {
+      return res.json({ success: false, message: "Slot is not available" });
+    }
+
+    // Add the new slot
+    slots_booked[slotDate].push(slotTime);
+
+    const userData = await userModel.findById(userId).select("-password");
+    if (!userData) {
+      return res.json({ success: false, message: "User data not found." });
+    }
+
+    const docInfoForAppointment = { ...docData.toObject() };
+    delete docInfoForAppointment.slots_booked;
+
+    const appointmentData = {
+      userId,
+      docId,
+      userData: userData.toObject(),
+      docData: docInfoForAppointment,
+      patientEmail: userData.email,
+      amount: docData.fees,
+      slotDate,
+      slotTime,
+      date: new Date(),
+    };
+
+    const newAppointment = new appointmentModel(appointmentData);
+    await newAppointment.save();
+
+    // Update doctor's slots_booked
+    await doctorModel.findByIdAndUpdate(docId, { slots_booked }, { new: true });
+
+    res.json({ success: true, message: "Appointment booked successfully" });
+  } catch (error) {
+    console.error("Error booking appointment:", error);
+    res.json({ success: false, message: "Failed to book appointment: " + error.message });
+  }
+};
 export {
   registerUser,
   loginUser,
   verifyEmail,
   getProfile,
-  updateProfile
+  updateProfile,
+  bookAppointment,
 };
