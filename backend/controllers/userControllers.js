@@ -94,6 +94,42 @@ const registerUser = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const sanitizedEmail = email?.trim().toLowerCase();
+
+    if (!sanitizedEmail || !password) {
+      return res.json({ success: false, message: "Missing credentials" });
+    }
+
+    const user = await userModel.findOne({ email: sanitizedEmail });
+
+    if (!user) {
+      return res.json({ success: false, message: "User doesn't exist" });
+    }
+    if (!user.isEmailVerified) {
+      return res.json({
+        success: false,
+        message: "Please verify your email before logging in.",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (isMatch) {
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      res.json({ success: true, token });
+    } else {
+      res.json({ success: false, message: "Invalid credentials" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
 export {
   registerUser,
+  loginUser
 };
