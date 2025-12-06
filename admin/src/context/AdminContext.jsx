@@ -74,17 +74,17 @@ const AdminContextProvider = (props) => {
                 { headers: { aToken } }
             )
             if (data.success) {
-                // Update the appointment in the local state
+                
                 setAppointments(prev => prev.map(app => 
                     app._id === appointmentId 
                         ? { ...app, cancelled: true, showToUser: false }
                         : app
                 ));
 
-                // Get the cancelled appointment's doctor ID
+               
                 const cancelledApp = appointments.find(app => app._id === appointmentId);
                 if (cancelledApp) {
-                    // Update the specific doctor's data
+                 
                     const { data: doctorData } = await axios.post(
                         backendUrl + '/api/admin/all-doctors',
                         {},
@@ -118,10 +118,9 @@ const AdminContextProvider = (props) => {
                 }
             )
             if (data.success) {
-                // Remove the appointment from local state
                 setAppointments(prev => prev.filter(app => app._id !== appointmentId));
                 
-                // Refresh doctors list to ensure slot availability is up to date
+                
                 await getAllDoctors();
                 
                 toast.success('Appointment deleted successfully');
@@ -184,7 +183,7 @@ const deleteDoctor = async (doctorId) => {
 };
 
 
-    // Initial data load
+    
     useEffect(() => {
         if (aToken) {
             getAllDoctors();
