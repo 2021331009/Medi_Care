@@ -401,6 +401,72 @@ const deleteAppointmentHistory = async (req, res) => {
     });
   }
 };
+
+const payCash = async (req, res) => {
+  try {
+    const { appointmentId } = req.body;
+    const userId = req.user.id;
+
+    // Find the appointment
+    const appointment = await appointmentModel.findOne({
+      _id: appointmentId,
+      userId,
+      cancelled: { $ne: true } // Ensure it's not cancelled
+    });
+
+    if (!appointment) {
+      return res.json({ 
+        success: false, 
+        message: "Appointment not found or unauthorized" 
+      });
+    }
+
+    // Update payment status
+    appointment.payment = true;
+    appointment.paymentMethod = 'cash';
+    appointment.paymentInfo = {
+      method: 'cash',
+      recordedAt: new Date(),
+      recordedBy: 'user'
+    };
+    
+    await appointment.save();
+
+    res.json({ 
+      success: true, 
+      message: "Cash payment recorded successfully" 
+    });
+  } catch (error) {
+    console.error("Error recording cash payment:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Failed to record payment: " + error.message 
+    });
+  }
+};
+
+// Function to get a single doctor by ID
+const getDoctorById = async (req, res) => {
+  try {
+    const { doctorId } = req.params;
+    
+    if (!doctorId) {
+      return res.status(400).json({ success: false, message: "Doctor ID is required" });
+    }
+    
+    const doctor = await doctorModel.findById(doctorId).select('-password -email');
+    
+    if (!doctor) {
+      return res.status(404).json({ success: false, message: "Doctor not found" });
+    }
+    
+    res.json({ success: true, doctor });
+  } catch (error) {
+    console.error("Error fetching doctor:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch doctor: " + error.message });
+  }
+};
+
 export {
   registerUser,
   loginUser,
@@ -411,4 +477,6 @@ export {
   listAppointment,
   cancelAppointment,
   deleteAppointmentHistory,
+  payCash,
+  getDoctorById,
 };
