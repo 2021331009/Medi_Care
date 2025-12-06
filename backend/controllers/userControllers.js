@@ -291,6 +291,45 @@ const bookAppointment = async (req, res) => {
     res.json({ success: false, message: "Failed to book appointment: " + error.message });
   }
 };
+
+const listAppointment = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "User ID not found in request" });
+    }
+    
+    // Fetch appointments that should be shown to the user
+    const appointments = await appointmentModel.find({ 
+      userId,
+      showToUser: true  // Only show appointments that haven't been cancelled by admin
+    })
+    .sort({ createdAt: -1 }) // Sort by creation time, newest first
+    .lean();
+
+    // Transform appointments to include status
+    const transformedAppointments = appointments.map(appointment => {
+      let status = 'pending';
+      if (appointment.cancelled) {
+        status = 'cancelled';
+      } else if (appointment.isCompleted) {
+        status = appointment.patientVisited ? 'completed' : 'missed';
+      } else if (appointment.isConfirmed) {
+        status = 'confirmed';
+      }
+
+      return {
+        ...appointment,
+        status
+      };
+    });
+
+    res.json({ success: true, appointments: transformedAppointments });
+  } catch (error) {
+    console.error("Error in listAppointment:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch appointments: " + error.message });
+  }
+};
 export {
   registerUser,
   loginUser,
@@ -298,4 +337,5 @@ export {
   getProfile,
   updateProfile,
   bookAppointment,
+  listAppointment,
 };
